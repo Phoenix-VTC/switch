@@ -21,3 +21,5 @@ mix.js("resources/js/app.js", "public/js/app.js")
 if (mix.inProduction()) {
     mix.version();
 }
+
+mix.copy("node_modules/inter-ui/Inter (web latin)", "public/fonts");
