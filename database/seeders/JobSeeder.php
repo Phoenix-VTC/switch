@@ -2,19 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Models\Job;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class JobSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      *
      * @return void
      */
     public function run(): void
     {
-        $this->call([
-            JobSeeder::class,
-        ]);
+        Job::factory(5000)->create();
     }
 }
