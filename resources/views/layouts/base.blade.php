@@ -44,9 +44,6 @@
         <meta property="twitter:image"
               content="{{ asset('img/meta-image.png') }}">
 
-        <!-- Fonts -->
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-
         <!-- Styles -->
         <link rel="stylesheet" href="{{ url(mix('css/app.css')) }}">
         @livewireStyles
