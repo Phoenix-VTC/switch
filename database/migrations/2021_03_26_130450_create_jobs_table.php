@@ -16,7 +16,7 @@ class CreateJobsTable extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->string('trucksbook_username');
-            $table->integer('trucksbook_job_id');
+            $table->integer('trucksbook_job_id')->unique();
             $table->string('game');
             $table->string('from');
             $table->string('to');
