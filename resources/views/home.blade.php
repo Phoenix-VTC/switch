@@ -38,22 +38,6 @@
             </div>
         </div>
 
-        <!-- Animated Background -->
-        <div class="area">
-            <ul class="circles">
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul>
-        </div>
-
         <!-- Info Modal -->
         <div @keydown.window.escape="showInfoModal = false"
              x-show="showInfoModal" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title"
@@ -109,5 +93,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Animated Background -->
+        <x-animated-background/>
     </div>
 @endsection
