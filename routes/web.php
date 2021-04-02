@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\TrucksbookDataController;
+use App\Http\Controllers\SteamAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,3 +16,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::view('/', 'home')->name('home');
+
+Route::name('steps.')->group(function () {
+    Route::view('start', 'steps.start')->name('start');
+
+    Route::middleware('auth')->group(function () {
+        Route::get('configure-trucksbook', [TrucksbookDataController::class, 'showTrucksbookIdentifierPage'])->name('configure-trucksbook');
+        Route::post('configure-trucksbook', [TrucksbookDataController::class, 'findTrucksbookAccount'])->name('find-trucksbook-account');
+
+        Route::get('confirm-jobs', [TrucksbookDataController::class, 'showConfirmJobsPage'])->name('confirm-jobs');
+    });
+});
+
+Route::prefix('auth/steam')->name('auth.')->group(function () {
+    Route::post('/', [SteamAuthController::class, 'redirectToSteam'])->name('steam');
+
+    Route::name('steam.')->group(function () {
+        Route::get('handle', [SteamAuthController::class, 'handle'])->name('handle');
+        Route::get('logout', [SteamAuthController::class, 'logout'])->name('logout');
+    });
+});

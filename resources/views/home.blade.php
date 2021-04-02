@@ -14,7 +14,7 @@
     </div>
 
     <div class="pt-6">
-        <a href="#"
+        <a href="{{ route('steps.start') }}"
            class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-base font-medium rounded-full text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
             Let's do this!
             <svg class="ml-3 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
