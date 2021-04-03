@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\BaseJob;
 use App\Models\Job as TrucksBookJob;
 use App\Models\User;
+use App\Notifications\Discord\SuccessfulJobTransfer as DiscordSuccessfulJobTransfer;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -83,8 +84,11 @@ class ProcessJobTransfer implements ShouldQueue
             DB::rollback();
 
             // Handle exception
+
+            exit;
         }
 
+        TrucksBookJob::where('trucksbook_username', $this->username)->first()->notify(new DiscordSuccessfulJobTransfer($this->user));
     }
 
     /**
