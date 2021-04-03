@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\BaseJob;
 use App\Models\Job as TrucksBookJob;
 use App\Models\User;
+use App\Notifications\Discord\ErroredJobTransfer as DiscordErroredJobTransfer;
 use App\Notifications\Discord\SuccessfulJobTransfer as DiscordSuccessfulJobTransfer;
 use Carbon\Carbon;
 use Exception;
@@ -47,7 +48,7 @@ class ProcessJobTransfer implements ShouldQueue
      * @return void
      * @throws Exception
      */
-    public function handle(): void
+    public function handle(): ?bool
     {
         $company = Company::firstOrCreate([
             'name' => 'Unknown Company (PhoenixSwitch)',
@@ -80,15 +81,23 @@ class ProcessJobTransfer implements ShouldQueue
             });
 
             DB::commit();
-        } catch (\Exception $ex) {
+        } catch (Exception $exception) {
             DB::rollback();
 
-            // Handle exception
+            TrucksBookJob::where('trucksbook_username', $this->username)
+                ->first()
+                ->notify(new DiscordErroredJobTransfer($this->user, [
+                    'class' => get_class($exception),
+                    'message' => $exception->getMessage()
+                ]));
 
-            exit;
+            $this->fail();
+            return false;
         }
 
         TrucksBookJob::where('trucksbook_username', $this->username)->first()->notify(new DiscordSuccessfulJobTransfer($this->user));
+
+        return true;
     }
 
     /**
