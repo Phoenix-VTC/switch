@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ParseTrucksbookUserIdRequest;
+use App\Jobs\ProcessJobTransfer;
 use App\Models\Job;
+use Auth;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -158,5 +160,12 @@ class TrucksbookDataController extends Controller
         $request->session()->put('trucksbook_identifier', $identifier);
 
         return $identifier;
+    }
+
+    public function startDataTransfer(Request $request)
+    {
+        ProcessJobTransfer::dispatch(Auth::user(), $request->session()->get('trucksbook_username'));
+
+        // Handle success page
     }
 }

@@ -25,6 +25,7 @@ Route::name('steps.')->group(function () {
         Route::post('configure-trucksbook', [TrucksbookDataController::class, 'findTrucksbookAccount'])->name('find-trucksbook-account');
 
         Route::get('confirm-jobs', [TrucksbookDataController::class, 'showConfirmJobsPage'])->name('confirm-jobs');
+        Route::post('confirm-jobs', [TrucksbookDataController::class, 'startDataTransfer'])->name('start-data-transfer');
     });
 });
 

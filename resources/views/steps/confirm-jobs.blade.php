@@ -66,7 +66,7 @@
 
 
     <div class="pt-6">
-        <form method="POST" action="">
+        <form method="POST" action="{{ route('steps.start-data-transfer') }}">
             @csrf
 
             <button type="submit"
