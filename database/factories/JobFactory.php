@@ -35,7 +35,7 @@ class JobFactory extends Factory
 
         return [
             'trucksbook_username' => $this->faker->userName,
-            'trucksbook_id' => random_int(1, 20000),
+            'trucksbook_job_id' => $this->faker->unique()->numberBetween(1, 20000),
             'game' => $game,
             'from' => $this->faker->city,
             'to' => $this->faker->city,
