@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TrucksbookDataController;
 use App\Http\Controllers\SteamAuthController;
+use App\Http\Livewire\ImportStatusPage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,3 +38,5 @@ Route::prefix('auth/steam')->name('auth.')->group(function () {
         Route::get('logout', [SteamAuthController::class, 'logout'])->name('logout');
     });
 });
+
+Route::get('import-status/{uuid}', ImportStatusPage::class)->name('import-status');

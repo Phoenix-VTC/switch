@@ -12,6 +12,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Throwable;
@@ -163,12 +164,12 @@ class TrucksbookDataController extends Controller
         return $identifier;
     }
 
-    public function startDataTransfer(Request $request)
+    public function startDataTransfer(Request $request): RedirectResponse
     {
         $started_import = StartedImport::create(['user_id' => Auth::id()]);
 
         ProcessJobTransfer::dispatch(Auth::user(), $request->session()->get('trucksbook_username'));
 
-        // Handle success page
+        return redirect()->route('import-status', $started_import->uuid);
     }
 }
