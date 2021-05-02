@@ -51,7 +51,7 @@ class ProcessJobTransfer implements ShouldQueue
     public function handle(): ?bool
     {
         $company = Company::firstOrCreate([
-            'name' => 'Unknown Company (PhoenixSwitch)',
+            'name' => 'PhoenixSwitch',
             'game_id' => 1,
         ]);
 
@@ -69,12 +69,12 @@ class ProcessJobTransfer implements ShouldQueue
                     $base_job->destination_company_id = $company->id;
                     $base_job->cargo_id = $this->cargoNameToId($trucksbook_job->cargo, $trucksbook_job->weight, $base_job->game_id);
                     $base_job->finished_at = Carbon::now();
-                    $base_job->planned_distance = $trucksbook_job->planned_distance;
-                    $base_job->driven_distance = $trucksbook_job->driven_distance;
+                    $base_job->distance = $this->parseDistance($trucksbook_job);
                     $base_job->load_damage = $trucksbook_job->damage;
-                    $base_job->estimated_income = $trucksbook_job->profit;
-                    $base_job->total_income = $trucksbook_job->profit;
+                    $base_job->estimated_income = $this->parseIncome($trucksbook_job);
+                    $base_job->total_income = $this->parseIncome($trucksbook_job);
                     $base_job->comments = $trucksbook_job->description . ' PhoenixSwitch Import. TrucksBook ID: ' . $trucksbook_job->trucksbook_job_id;
+                    $base_job->status = 2;
 
                     $base_job->save();
                 }
@@ -150,5 +150,33 @@ class ProcessJobTransfer implements ShouldQueue
             'weight' => $weight,
             'game_id' => $game_id,
         ])->id;
+    }
+
+    /**
+     * @param $job
+     * @return int
+     * @throws Exception
+     */
+    public function parseDistance($job): int
+    {
+        if ($this->gameNameToId($job->game) === 2) {
+            return $job->driven_distance * 1.609;
+        }
+
+        return $job->driven_distance;
+    }
+
+    /**
+     * @param $job
+     * @return int
+     * @throws Exception
+     */
+    public function parseIncome($job): int
+    {
+        if ($this->gameNameToId($job->game) === 2) {
+            return $job->profit * 0.83;
+        }
+
+        return $job->profit;
     }
 }
