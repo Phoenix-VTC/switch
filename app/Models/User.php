@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
+    use HasRoles;
+
     /**
      * The database connection that should be used by the model.
      *
@@ -19,9 +22,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
-        'password',
+        'steam_id',
+        'truckersmp_id',
+        'welcome_valid_until',
+        'welcome_token',
     ];
 
     /**
@@ -32,6 +38,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'welcome_token',
     ];
 
     /**
