@@ -7,6 +7,7 @@ use App\Models\City;
 use App\Models\Company;
 use App\Models\BaseJob;
 use App\Models\Job as TrucksBookJob;
+use App\Models\StartedImport;
 use App\Models\User;
 use App\Notifications\Discord\ErroredJobTransfer as DiscordErroredJobTransfer;
 use App\Notifications\Discord\SuccessfulJobTransfer as DiscordSuccessfulJobTransfer;
@@ -55,6 +56,8 @@ class ProcessJobTransfer implements ShouldQueue
             'game_id' => 1,
         ]);
 
+        $started_import = StartedImport::where('user_id', $this->user->id)->firstOrFail();
+
         DB::beginTransaction();
         try {
             TrucksBookJob::where('trucksbook_username', $this->username)->chunk(25, function ($trucksbook_jobs) use ($company) {
@@ -91,11 +94,17 @@ class ProcessJobTransfer implements ShouldQueue
                     'message' => $exception->getMessage()
                 ]));
 
+            $started_import->failed = true;
+            $started_import->save();
+
             $this->fail();
             return false;
         }
 
         TrucksBookJob::where('trucksbook_username', $this->username)->first()->notify(new DiscordSuccessfulJobTransfer($this->user));
+
+        $started_import->completed = true;
+        $started_import->save();
 
         return true;
     }
