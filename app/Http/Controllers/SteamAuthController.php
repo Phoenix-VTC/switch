@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StartedImport;
 use App\Models\User;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -70,6 +71,19 @@ class SteamAuthController extends Controller
                         <strong>You don't have access to access Phoenix Switch yet.</strong>
                         <br>
                         Currently, only beta testers have access to this platform.
+                        <br>
+                        If you need any assistance, please let us know in the
+                        <a class='font-medium underline text-red-700 hover:text-red-600' href='https://discord.gg/PhoenixVTC' target='_blank'>#member-support channel on Discord</a>.
+                        "]);
+                }
+
+                // Check if the user already used Switch before
+                if (StartedImport::where('user_id', $user->id)->count()) {
+                    return redirect(route('steps.start'))
+                        ->withErrors(['message' => "
+                        <strong>It looks like you've already imported your jobs.</strong>
+                        <br>
+                        Phoenix Switch can only be used once per user.
                         <br>
                         If you need any assistance, please let us know in the
                         <a class='font-medium underline text-red-700 hover:text-red-600' href='https://discord.gg/PhoenixVTC' target='_blank'>#member-support channel on Discord</a>.
