@@ -7,6 +7,7 @@ use App\Models\City;
 use App\Models\Company;
 use App\Models\BaseJob;
 use App\Models\Job as TrucksBookJob;
+use App\Models\StartedImport;
 use App\Models\User;
 use App\Notifications\Discord\ErroredJobTransfer as DiscordErroredJobTransfer;
 use App\Notifications\Discord\SuccessfulJobTransfer as DiscordSuccessfulJobTransfer;
@@ -96,6 +97,10 @@ class ProcessJobTransfer implements ShouldQueue
         }
 
         TrucksBookJob::where('trucksbook_username', $this->username)->first()->notify(new DiscordSuccessfulJobTransfer($this->user));
+
+        $started_import = StartedImport::where('user_id', $this->user->id)->firstOrFail();
+        $started_import->completed = true;
+        $started_import->save();
 
         return true;
     }

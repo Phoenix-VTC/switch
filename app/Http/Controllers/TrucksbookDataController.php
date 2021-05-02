@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ParseTrucksbookUserIdRequest;
 use App\Jobs\ProcessJobTransfer;
 use App\Models\Job;
+use App\Models\StartedImport;
 use Auth;
 use Exception;
 use GuzzleHttp\Client;
@@ -164,6 +165,8 @@ class TrucksbookDataController extends Controller
 
     public function startDataTransfer(Request $request)
     {
+        $started_import = StartedImport::create(['user_id' => Auth::id()]);
+
         ProcessJobTransfer::dispatch(Auth::user(), $request->session()->get('trucksbook_username'));
 
         // Handle success page
