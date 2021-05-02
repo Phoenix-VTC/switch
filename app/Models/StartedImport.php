@@ -18,6 +18,7 @@ class StartedImport extends Model
         'uuid',
         'user_id',
         'completed',
+        'failed',
     ];
 
     /**
@@ -27,5 +28,6 @@ class StartedImport extends Model
      */
     protected $casts = [
         'completed' => 'boolean',
+        'failed' => 'boolean',
     ];
 }

@@ -21,6 +21,8 @@ class CreateStartedImportsTable extends Migration
                 ->on(config('database.connections.base.database') . '.users');
             $table->boolean('completed')
                 ->default(false);
+            $table->boolean('failed')
+                ->default(false);
             $table->timestamps();
         });
     }

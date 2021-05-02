@@ -56,6 +56,8 @@ class ProcessJobTransfer implements ShouldQueue
             'game_id' => 1,
         ]);
 
+        $started_import = StartedImport::where('user_id', $this->user->id)->firstOrFail();
+
         DB::beginTransaction();
         try {
             TrucksBookJob::where('trucksbook_username', $this->username)->chunk(25, function ($trucksbook_jobs) use ($company) {
@@ -92,13 +94,15 @@ class ProcessJobTransfer implements ShouldQueue
                     'message' => $exception->getMessage()
                 ]));
 
+            $started_import->failed = true;
+            $started_import->save();
+
             $this->fail();
             return false;
         }
 
         TrucksBookJob::where('trucksbook_username', $this->username)->first()->notify(new DiscordSuccessfulJobTransfer($this->user));
 
-        $started_import = StartedImport::where('user_id', $this->user->id)->firstOrFail();
         $started_import->completed = true;
         $started_import->save();
 
