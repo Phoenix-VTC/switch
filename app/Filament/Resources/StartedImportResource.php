@@ -65,7 +65,10 @@ class StartedImportResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Filter::make('Completed Imports', fn ($query) => $query->where('completed', true)),
+                Filter::make('Uncompleted Imports', fn ($query) => $query->where('completed', false)),
+                Filter::make('Failed Imports', fn ($query) => $query->where('failed', true)),
+                Filter::make('Successful Imports', fn ($query) => $query->where('failed', false)),
             ]);
     }
 
