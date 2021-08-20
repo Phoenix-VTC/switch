@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BaseJob extends Model
 {
@@ -19,4 +20,12 @@ class BaseJob extends Model
      * @var string
      */
     protected $table = 'jobs';
+
+    /**
+     * Get the user that owns the job.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }
