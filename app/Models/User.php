@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Bavix\Wallet\Interfaces\Wallet;
+use Bavix\Wallet\Traits\HasWallet;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Wallet
 {
     use HasRoles;
+    use HasWallet;
 
     /**
      * The database connection that should be used by the model.
