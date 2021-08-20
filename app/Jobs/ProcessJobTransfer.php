@@ -15,11 +15,11 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ProcessJobTransfer implements ShouldQueue
 {
@@ -66,11 +66,11 @@ class ProcessJobTransfer implements ShouldQueue
 
                     $base_job->user_id = $this->user->id;
                     $base_job->game_id = $this->gameNameToId($trucksbook_job->game);
-                    $base_job->pickup_city_id = $this->cityNameToId($trucksbook_job->from);
-                    $base_job->destination_city_id = $this->cityNameToId($trucksbook_job->to);
+                    $base_job->pickup_city_id = $this->findOrCreateCity($trucksbook_job->from)->id;
+                    $base_job->destination_city_id = $this->findOrCreateCity($trucksbook_job->to)->id;
                     $base_job->pickup_company_id = $company->id;
                     $base_job->destination_company_id = $company->id;
-                    $base_job->cargo_id = $this->cargoNameToId($trucksbook_job->cargo, $trucksbook_job->weight, $base_job->game_id);
+                    $base_job->cargo_id = $this->findOrCreateCargo($trucksbook_job->cargo, $trucksbook_job->weight, $base_job->game_id)->id;
                     $base_job->finished_at = Carbon::now();
                     $base_job->distance = $this->parseDistance($trucksbook_job);
                     $base_job->load_damage = $trucksbook_job->damage;
@@ -131,34 +131,37 @@ class ProcessJobTransfer implements ShouldQueue
 
     /**
      * @param string $city
-     * @return int
+     * @return City
      */
-    private function cityNameToId(string $city): int
+    private function findOrCreateCity(string $city): City
     {
-        try {
-            return City::where('real_name', $city)->firstOrFail()->id;
-        } catch (ModelNotFoundException $e) {
-            return City::firstOrCreate([
-                'real_name' => 'Unknown City (PhoenixSwitch)',
-                'name' => 'unknown_city_phoenixswitch',
-                'country' => 'Unknown'
-            ])->id;
-        }
+        return City::firstOrCreate([
+            'real_name' => $city,
+        ], [
+            'name' => Str::snake($city),
+            'country' => 'Unknown'
+        ]);
     }
 
     /**
      * @param string $cargo
      * @param int $weight
      * @param int $game_id
-     * @return int
+     * @return Cargo
      */
-    private function cargoNameToId(string $cargo, int $weight, int $game_id): int
+    private function findOrCreateCargo(string $cargo, int $weight, int $game_id): Cargo
     {
+        // Convert the ETS cargo weight from kilos to tonnes
+        if ($game_id === 1) {
+            $weight = round($weight / 1000);
+        }
+
         return Cargo::firstOrCreate([
             'name' => $cargo,
-            'weight' => $weight,
             'game_id' => $game_id,
-        ])->id;
+        ], [
+            'weight' => $weight,
+        ]);
     }
 
     /**
