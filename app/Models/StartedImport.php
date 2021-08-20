@@ -30,4 +30,12 @@ class StartedImport extends Model
         'completed' => 'boolean',
         'failed' => 'boolean',
     ];
+
+    /**
+     * Get the user that owns the import.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

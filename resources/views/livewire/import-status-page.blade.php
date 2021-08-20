@@ -5,7 +5,7 @@
 
         <h1 class="text-3xl md:text-5xl lg:text-6xl font-semibold">
             @if(!$import->failed)
-                Nice work, {{ Auth::user()->username }}!
+                Nice work, {{ $import->user->username }}!
             @else
                 Well, this is awkward...
             @endif
